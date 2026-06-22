@@ -64,7 +64,7 @@ namespace Video_Program
 
 
         // 고객 검색 버튼 이벤트
-        // 고객명, 고객코드, 전화번호, 휴대폰으로 고객 검색
+        // 고객명, 고객코드, 전화번호, 휴대폰으로 고객 검색하는 버튼 이벤트
         private void Btn_FindUser_Click(object sender, EventArgs e)
         {
             string keyword = "";
@@ -257,12 +257,16 @@ namespace Video_Program
         // 신작에서 구작으로 변경되는 기준 일수 조회 메서드
         private int GetChangeDays()
         {
+            // 기본 전환 일수 설정
             int changeDays = 180;
 
+            // DB 연결
             conn = new SqlConnection(connStr);
 
             conn.Open();
 
+
+            // 신작 전환 일수 조회
             SqlCommand cmd = new SqlCommand(
 
                 @"SELECT TOP 1
@@ -272,6 +276,7 @@ namespace Video_Program
 
             object value = cmd.ExecuteScalar();
 
+            // 전환 일수 반환
             if (value != DBNull.Value)
             {
                 changeDays = Convert.ToInt32(value);
@@ -288,6 +293,7 @@ namespace Video_Program
         {
             try
             {
+                // DB 연결
                 conn = new SqlConnection(connStr);
 
                 conn.Open();
@@ -346,9 +352,11 @@ namespace Video_Program
                 // 신작/구작 기준 일수 조회
                 int changeDays = GetChangeDays();
 
+                // DB 연결
                 conn = new SqlConnection(connStr);
 
                 conn.Open();
+
 
                 SqlCommand cmd = new SqlCommand("Select_Video",conn);
 
@@ -356,6 +364,7 @@ namespace Video_Program
 
                 cmd.Parameters.AddWithValue("@VideoCode",Convert.ToInt32(Tb_VideoCode.Text));
 
+                // 비디오 정보 조회
                 SqlDataReader dr = cmd.ExecuteReader();
 
                 if (dr.Read())
@@ -380,8 +389,10 @@ namespace Video_Program
                         programType = "구작";
                     }
 
+                    // 환경설정 정보 출력
                     LoadRentalSetting(programType);
                 }
+                // 존재하지 않는 비디오 처리
                 else
                 {
                     MessageBox.Show("존재하지 않는 비디오입니다.");
@@ -406,11 +417,13 @@ namespace Video_Program
         // 다음 대여번호 자동 생성 메서드
         private int GetNextRentalNo()
         {
-            conn =
-            new SqlConnection(connStr);
+            // DB 연결
+            conn = new SqlConnection(connStr);
 
             conn.Open();
 
+
+            // 다음 대여번호 생성
             SqlCommand cmd = new SqlCommand(
                 @"SELECT
                 ISNULL(MAX(RentalNo),0)+1
@@ -421,6 +434,7 @@ namespace Video_Program
 
             conn.Close();
 
+            // 대여번호 반환
             return rentalNo;
         }
 
@@ -431,12 +445,12 @@ namespace Video_Program
         {
             try
             {
-                conn =
-                new SqlConnection(
-                connStr);
+                // DB 연결
+                conn = new SqlConnection(connStr);
 
                 conn.Open();
 
+                // 현재 고객의 대여 통계 조회
                 SqlCommand cmd =
                 new SqlCommand(
 
@@ -456,14 +470,18 @@ namespace Video_Program
 
                 SqlDataReader dr = cmd.ExecuteReader();
 
+                
                 if (dr.Read())
                 {
+                    // 총 대여 개수 출력
                     Lb_Every_Realse_Count.Text =
                     dr.GetInt32(0) + "개";
 
+                    // 총 대여료 출력
                     Lb_Every_Realse_Money.Text =
                     dr.GetInt32(1) + "원";
 
+                    // 총 연체료 출력
                     Lb_Every_Overdue_Money.Text =
                     dr.GetInt32(2) + "원";
                 }
@@ -571,15 +589,20 @@ namespace Video_Program
         // 현재 고객의 대여중인 비디오 목록 조회 메서드
         private void LoadRentalList(int customerCode)
         {
+
             try
             {
+                // 기존 목록 초기화
                 GV_VideoList.Rows.Clear();
 
+                // DB 연결
                 conn =
                     new SqlConnection(connStr);
 
                 conn.Open();
 
+
+                // 현재 고객의 대여 목록 조회
                 string sql =
 
                 @"SELECT
@@ -601,6 +624,8 @@ namespace Video_Program
 
                 SqlDataReader dr = cmd.ExecuteReader();
 
+
+                // 조회 결과를 DataGridView에 출력
                 while (dr.Read())
                 {
                     GV_VideoList.Rows.Add(
@@ -632,9 +657,11 @@ namespace Video_Program
         // 연체료 계산 메서드
         private int CalculateLateFee()
         {
+            // 선택한 비디오 확인
             if (GV_VideoList.SelectedRows.Count == 0)
                 return 0;
 
+            // 반납 예정일 가져오기
             DateTime dueDate =
                 Convert.ToDateTime(
                 GV_VideoList
@@ -642,26 +669,25 @@ namespace Video_Program
                 .Cells[4]
                 .Value);
 
+            // 연체 일수 계산
             int overdueDays = (DateTime.Today - dueDate).Days;
 
+            // 연체 여부 확인
             if (overdueDays <= 0)
 
                 return 0;
 
-            int dailyLateFee =
+            // 하루 연체료 가져오기
+            int dailyLateFee = int.Parse(Lb_Overdue_Money.Text.Replace("원", ""));
 
-            int.Parse(
-
-            Lb_Overdue_Money
-            .Text
-            .Replace("원", ""));
-
+            // 최종 연체료 계산
             return overdueDays * dailyLateFee;
         }
 
         // 비디오 반납 버튼 이벤트
         private void Btn_VideoRetrieve_Click(object sender, EventArgs e)
         {
+            // 선택한 비디오 확인
             if (GV_VideoList.SelectedRows.Count == 0)
             {
                 MessageBox.Show("비디오를 선택하세요.");
@@ -683,6 +709,7 @@ namespace Video_Program
                 // 연체료 계산
                 int lateFee = CalculateLateFee();
 
+                // DB 연결
                 conn = new SqlConnection(connStr);
 
                 conn.Open();

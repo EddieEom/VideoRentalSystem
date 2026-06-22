@@ -53,22 +53,27 @@ namespace Video_Program
         {
             try
             {
+                // DataGridView 초기화
                 ClearGrid();
 
+                // 비디오 대여 순위 컬럼 생성
                 GV_Select.Columns.Add("VideoCode", "비디오코드");
 
                 GV_Select.Columns.Add("Title", "제목");
 
                 GV_Select.Columns.Add("RentalCount", "대여횟수");
 
+                // DB 연결
                 conn = new SqlConnection(connStr);
 
                 conn.Open();
 
+                // 비디오 대여 순위 저장 프로시저 실행
                 SqlCommand cmd = new SqlCommand("Select_VideoRank", conn);
 
                 cmd.CommandType = CommandType.StoredProcedure;
 
+                // 조회 결과를 DataGridView에 출력
                 SqlDataReader dr = cmd.ExecuteReader();
 
                 while (dr.Read())
@@ -108,22 +113,27 @@ namespace Video_Program
         {
             try
             {
+                // DataGridView 초기화
                 ClearGrid();
 
+                // 고객 대여 순위 컬럼 생성
                 GV_Select.Columns.Add("CustomerCode", "고객코드");
 
                 GV_Select.Columns.Add("CustomerName", "고객명");
 
                 GV_Select.Columns.Add("RentalCount", "대여횟수");
 
+                // DB 연결
                 conn = new SqlConnection(connStr);
 
                 conn.Open();
 
+                // 고객 대여 순위 저장 프로시저 실행
                 SqlCommand cmd = new SqlCommand("Select_CustomerRank", conn);
 
                 cmd.CommandType = CommandType.StoredProcedure;
 
+                // 조회 결과를 DataGridView에 출력
                 SqlDataReader dr = cmd.ExecuteReader();
 
                 while (dr.Read())
@@ -159,12 +169,15 @@ namespace Video_Program
             }
         }
 
+        // 현재 대여 중인 비디오 조회 메서드
         private void LoadRentingVideo()
         {
             try
             {
+                // DataGridView 초기화
                 ClearGrid();
 
+                // 대여 중인 비디오 컬럼 생성
                 GV_Select.Columns.Add("VideoCode", "비디오코드");
 
                 GV_Select.Columns.Add("Title", "제목");
@@ -175,14 +188,17 @@ namespace Video_Program
 
                 GV_Select.Columns.Add("DueDate", "반납예정일");
 
+                // DB 연결
                 conn = new SqlConnection(connStr);
 
                 conn.Open();
 
+                // 대여 중인 비디오 저장 프로시저 실행
                 SqlCommand cmd = new SqlCommand("Select_RentingVideo", conn);
 
                 cmd.CommandType = CommandType.StoredProcedure;
 
+                // 조회 결과를 DataGridView에 출력
                 SqlDataReader dr = cmd.ExecuteReader();
 
                 while (dr.Read())
@@ -225,18 +241,23 @@ namespace Video_Program
         {
             try
             {
+                // DataGridView 초기화
                 ClearGrid();
 
+
+                // 비디오 대여 순위 컬럼 생성
                 GV_Select.Columns.Add("VideoCode", "비디오코드");
 
                 GV_Select.Columns.Add("Title", "제목");
 
                 GV_Select.Columns.Add("RentalCount", "대여횟수");
 
+                // DB 연결
                 conn = new SqlConnection(connStr);
 
                 conn.Open();
 
+                // 장르 조건 검색 SQL 실행
                 SqlCommand cmd = new SqlCommand(
                     @"SELECT
                     V.VideoCode,
@@ -258,6 +279,7 @@ namespace Video_Program
 
                 cmd.Parameters.AddWithValue("@Genre", genre);
 
+                // 조회 결과를 DataGridView에 출력
                 SqlDataReader dr = cmd.ExecuteReader();
 
                 while (dr.Read())
@@ -288,18 +310,22 @@ namespace Video_Program
         {
             try
             {
+                // DataGridView 초기화
                 ClearGrid();
 
+                // 고객 대여 순위 컬럼 생성
                 GV_Select.Columns.Add("CustomerCode", "고객코드");
 
                 GV_Select.Columns.Add("CustomerName", "고객명");
 
                 GV_Select.Columns.Add("RentalCount", "대여횟수");
 
+                // DB 연결
                 conn = new SqlConnection(connStr);
 
                 conn.Open();
 
+                // 고객 신분 조건 검색 SQL 실행
                 SqlCommand cmd = new SqlCommand(
 
                 @"SELECT
@@ -325,6 +351,7 @@ namespace Video_Program
 
                 cmd.Parameters.AddWithValue("@CustomerType", customerType);
 
+                // 조회 결과를 DataGridView에 출력
                 SqlDataReader dr = cmd.ExecuteReader();
 
                 while (dr.Read())
@@ -439,21 +466,25 @@ namespace Video_Program
         // 검색 버튼 클릭 시 선택한 조건으로 조회 수행
         private void Btn_Search_Click(object sender, EventArgs e)
         {
+            // 검색 조건 가져오기
             string genre = Tb_Genre.Text.Trim();
 
             string type = Tb_CustomerType.Text.Trim();
 
+            // 비디오 대여 순위 검색
             if (Rbt_RentalRank.Checked)
             {
                 SearchVideoRank(genre);
             }
 
+            // 고객 대여 순위 검색
             else if (
             Rbt_CustomerRank.Checked)
             {
                 SearchCustomerRank(type);
             }
 
+            // 대여 중인 비디오 검색
             else if (
             Rbt_RentingRank.Checked)
             {
@@ -462,6 +493,7 @@ namespace Video_Program
                 type);
             }
 
+            // 조회 항목 미선택 시 안내 메시지 출력
             else
             {
                 MessageBox.Show(
