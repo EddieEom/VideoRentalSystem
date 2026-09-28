@@ -1,21 +1,18 @@
 ﻿using Microsoft.Data.SqlClient;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using System.IO;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Video_Program
 {
     public partial class Video_Info : Form
     {
-
-        // DB 연결
-        private string connStr = @"Server=localhost;Database=VideoRentalDB;Trusted_Connection=True;TrustServerCertificate=True";
-        private SqlConnection conn;
+        // DB 연결 문자열
+        private readonly string connStr =
+            @"Server=localhost;Database=VideoRentalDB;Trusted_Connection=True;TrustServerCertificate=True";
 
         // 폼 수정 여부 확인 변수
         public bool IsModified = false;
@@ -26,146 +23,114 @@ namespace Video_Program
             InitializeComponent();
         }
 
-        // 현재 등록된 비디오 개수 조회 메서드
-        private void LoadVideoCount()
+
+        // ============================================
+        // 현재 등록된 비디오 개수 조회
+        // ============================================
+
+        private async Task LoadVideoCountAsync()
         {
             try
             {
-                conn = new SqlConnection(connStr);
+                using SqlConnection conn =
+                    new SqlConnection(connStr);
 
-                conn.Open();
+                await conn.OpenAsync();
 
-                // 비디오 개수 조회
-                SqlCommand cmd =
+                using SqlCommand cmd =
                     new SqlCommand(
-                    "SELECT COUNT(*) FROM VIDEO",
-                    conn);
+                        "SELECT COUNT(*) FROM VIDEO",
+                        conn
+                    );
 
-                int count = (int)cmd.ExecuteScalar();
+                object? result =
+                    await cmd.ExecuteScalarAsync();
+
+                int count =
+                    Convert.ToInt32(result);
 
                 // 화면에 비디오 개수 출력
-                Video_Count.Text = count + "개";
-
-                conn.Close();
+                Video_Count.Text =
+                    count + "개";
             }
-
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
         }
 
-        // 비디오 전체 목록 조회 메서드
-        private void LoadVideo()
+
+        // ============================================
+        // 비디오 전체 목록 조회
+        // ============================================
+
+        private async Task LoadVideoAsync()
         {
             try
             {
                 // 기존 목록 초기화
                 GV_Video.Rows.Clear();
 
-                // DB 연결
-                conn = new SqlConnection(connStr);
+                using SqlConnection conn =
+                    new SqlConnection(connStr);
 
-                conn.Open();
+                await conn.OpenAsync();
 
                 // 전체 비디오 조회 저장 프로시저 실행
-                SqlCommand cmd = new SqlCommand("Select_All_Video",conn);
+                using SqlCommand cmd =
+                    new SqlCommand(
+                        "Select_All_Video",
+                        conn
+                    );
 
-                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandType =
+                    CommandType.StoredProcedure;
 
-                SqlDataReader dr = cmd.ExecuteReader();
+                using SqlDataReader dr =
+                    await cmd.ExecuteReaderAsync();
 
                 // DataGridView에 데이터 출력
-                while (dr.Read())
+                while (await dr.ReadAsync())
                 {
                     GV_Video.Rows.Add(
-
                         dr["VideoCode"],
-
                         dr["Genre"],
-
                         dr["Title"],
-
                         dr["MainActor"],
-
                         dr["Director"],
-
                         dr["Distributor"],
-
                         dr["ReleaseDate"]
                     );
                 }
-
-                dr.Close();
-
-                conn.Close();
             }
-
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
         }
 
-        // 비디오 등록 버튼 이벤트
-        private void Btn_Video_Insert_Click(object sender, EventArgs e)
+
+        // ============================================
+        // 비디오 등록
+        // ============================================
+
+        private async void Btn_Video_Insert_Click(
+            object sender,
+            EventArgs e)
         {
             try
             {
-                conn = new SqlConnection(connStr);
-
-                conn.Open();
-
-                // 비디오 추가 저장 프로시저 실행
-                SqlCommand cmd = new SqlCommand("Insert_Video", conn);
-
-                cmd.CommandType = CommandType.StoredProcedure;
-
-                cmd.Parameters.AddWithValue("@VideoCode",Convert.ToInt32(Tb_VideoCode.Text));
-
-                cmd.Parameters.AddWithValue("@Title",Tb_Title.Text);
-
-                cmd.Parameters.AddWithValue("@Genre",Tb_Genre.Text);
-
-                cmd.Parameters.AddWithValue("@MainActor",Tb_MainActor.Text);
-
-                cmd.Parameters.AddWithValue("@Director",Tb_Director.Text);
-
-                cmd.Parameters.AddWithValue("@Distributor",Tb_Distributor.Text);
-
-                cmd.Parameters.AddWithValue("@ReleaseDate",Dt_Video_Info.Value);
-
-                cmd.ExecuteNonQuery();
-
-                MessageBox.Show("추가 완료");
-
-                // 화면 새로고침
-                LoadVideo();
-
-                // 비디오 개수 새로고침
-                LoadVideoCount();
-
-                conn.Close();
-            }
-
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        // 비디오 수정 버튼 이벤트
-        private void Btn_Video_Save_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                conn =
+                using SqlConnection conn =
                     new SqlConnection(connStr);
 
-                conn.Open();
+                await conn.OpenAsync();
 
-                // 비디오 수정 저장 프로시저 실행
-                SqlCommand cmd = new SqlCommand("Update_Video",conn);
+                // 비디오 추가 저장 프로시저 실행
+                using SqlCommand cmd =
+                    new SqlCommand(
+                        "Insert_Video",
+                        conn
+                    );
 
                 cmd.CommandType =
                     CommandType.StoredProcedure;
@@ -173,7 +138,7 @@ namespace Video_Program
                 cmd.Parameters.AddWithValue(
                     "@VideoCode",
                     Convert.ToInt32(
-                    Tb_VideoCode.Text));
+                        Tb_VideoCode.Text));
 
                 cmd.Parameters.AddWithValue(
                     "@Title",
@@ -199,59 +164,148 @@ namespace Video_Program
                     "@ReleaseDate",
                     Dt_Video_Info.Value);
 
-                cmd.ExecuteNonQuery();
+                await cmd.ExecuteNonQueryAsync();
 
-                MessageBox.Show("저장 완료");
+                MessageBox.Show(
+                    "추가 완료");
 
                 // 화면 새로고침
-                LoadVideo();
+                await LoadVideoAsync();
 
-                conn.Close();
+                // 비디오 개수 새로고침
+                await LoadVideoCountAsync();
             }
-
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
         }
 
-        // 비디오 삭제 버튼 이벤트
-        private void Btn_Video_Delete_Click(object sender, EventArgs e)
+
+        // ============================================
+        // 비디오 수정
+        // ============================================
+
+        private async void Btn_Video_Save_Click(
+            object sender,
+            EventArgs e)
         {
             try
             {
-                conn = new SqlConnection(connStr);
+                using SqlConnection conn =
+                    new SqlConnection(connStr);
 
-                conn.Open();
+                await conn.OpenAsync();
 
-                // 비디오 삭제 저장 프로시저 실행
-                SqlCommand cmd = new SqlCommand("Delete_Video",conn);
+                // 비디오 수정 저장 프로시저 실행
+                using SqlCommand cmd =
+                    new SqlCommand(
+                        "Update_Video",
+                        conn
+                    );
 
-                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandType =
+                    CommandType.StoredProcedure;
 
-                cmd.Parameters.AddWithValue("@VideoCode",Convert.ToInt32(Tb_VideoCode.Text));
+                cmd.Parameters.AddWithValue(
+                    "@VideoCode",
+                    Convert.ToInt32(
+                        Tb_VideoCode.Text));
 
-                cmd.ExecuteNonQuery();
+                cmd.Parameters.AddWithValue(
+                    "@Title",
+                    Tb_Title.Text);
 
-                MessageBox.Show("삭제 완료");
+                cmd.Parameters.AddWithValue(
+                    "@Genre",
+                    Tb_Genre.Text);
+
+                cmd.Parameters.AddWithValue(
+                    "@MainActor",
+                    Tb_MainActor.Text);
+
+                cmd.Parameters.AddWithValue(
+                    "@Director",
+                    Tb_Director.Text);
+
+                cmd.Parameters.AddWithValue(
+                    "@Distributor",
+                    Tb_Distributor.Text);
+
+                cmd.Parameters.AddWithValue(
+                    "@ReleaseDate",
+                    Dt_Video_Info.Value);
+
+                await cmd.ExecuteNonQueryAsync();
+
+                MessageBox.Show(
+                    "저장 완료");
 
                 // 화면 새로고침
-                LoadVideo();
-
-                // 비디오 개수 새로고침
-                LoadVideoCount();
-
-                conn.Close();
+                await LoadVideoAsync();
             }
-
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
         }
 
+
+        // ============================================
+        // 비디오 삭제
+        // ============================================
+
+        private async void Btn_Video_Delete_Click(
+            object sender,
+            EventArgs e)
+        {
+            try
+            {
+                using SqlConnection conn =
+                    new SqlConnection(connStr);
+
+                await conn.OpenAsync();
+
+                // 비디오 삭제 저장 프로시저 실행
+                using SqlCommand cmd =
+                    new SqlCommand(
+                        "Delete_Video",
+                        conn
+                    );
+
+                cmd.CommandType =
+                    CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue(
+                    "@VideoCode",
+                    Convert.ToInt32(
+                        Tb_VideoCode.Text));
+
+                await cmd.ExecuteNonQueryAsync();
+
+                MessageBox.Show(
+                    "삭제 완료");
+
+                // 화면 새로고침
+                await LoadVideoAsync();
+
+                // 비디오 개수 새로고침
+                await LoadVideoCountAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+
+        // ============================================
         // 선택한 비디오 정보를 입력창에 출력
-        private void GV_Video_CellClick(object sender, DataGridViewCellEventArgs e)
+        // ============================================
+
+        private void GV_Video_CellClick(
+            object sender,
+            DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0)
                 return;
@@ -288,27 +342,38 @@ namespace Video_Program
 
             Dt_Video_Info.Value =
                 Convert.ToDateTime(
-
-                GV_Video.Rows[e.RowIndex]
-                .Cells[6]
-                .Value
+                    GV_Video.Rows[e.RowIndex]
+                    .Cells[6]
+                    .Value
                 );
         }
 
-        // 폼 로드 시 비디오 목록 조회
-        private void Video_Info_Load(object sender, EventArgs e)
-        {
-            LoadVideo();
 
-            LoadVideoCount();
+        // ============================================
+        // 폼 로드
+        // ============================================
+
+        private async void Video_Info_Load(
+            object sender,
+            EventArgs e)
+        {
+            await LoadVideoAsync();
+
+            await LoadVideoCountAsync();
         }
 
-        // 비디오 목록 CSV 저장 버튼 이벤트
-        private void Btn_VideoList_Save_Click(object sender, EventArgs e)
+
+        // ============================================
+        // 비디오 목록 CSV 저장
+        // ============================================
+
+        private async void Btn_VideoList_Save_Click(
+            object sender,
+            EventArgs e)
         {
             try
             {
-                SaveFileDialog save =
+                using SaveFileDialog save =
                     new SaveFileDialog();
 
                 save.Filter =
@@ -323,33 +388,34 @@ namespace Video_Program
                     return;
                 }
 
-                StreamWriter sw =
+                using StreamWriter sw =
                     new StreamWriter(
-                    save.FileName,
-                    false,
-                    Encoding.UTF8);
+                        save.FileName,
+                        false,
+                        Encoding.UTF8
+                    );
 
                 // 헤더 저장
-
                 for (int i = 0;
                     i < GV_Video.Columns.Count;
                     i++)
                 {
-                    sw.Write(
-                    GV_Video.Columns[i]
-                    .HeaderText);
+                    await sw.WriteAsync(
+                        GV_Video.Columns[i]
+                        .HeaderText);
 
                     if (i <
-                    GV_Video.Columns.Count - 1)
-
-                        sw.Write(",");
+                        GV_Video.Columns.Count - 1)
+                    {
+                        await sw.WriteAsync(",");
+                    }
                 }
 
-                sw.WriteLine();
+                await sw.WriteLineAsync();
 
                 // 데이터 저장
-
-                foreach (DataGridViewRow row
+                foreach (
+                    DataGridViewRow row
                     in GV_Video.Rows)
                 {
                     if (row.IsNewRow)
@@ -359,36 +425,41 @@ namespace Video_Program
                         i < GV_Video.Columns.Count;
                         i++)
                     {
-                        sw.Write(
-                        row.Cells[i]
-                        .Value);
+                        await sw.WriteAsync(
+                            row.Cells[i]
+                            .Value?
+                            .ToString());
 
                         if (i <
-                        GV_Video.Columns.Count - 1)
-
-                            sw.Write(",");
+                            GV_Video.Columns.Count - 1)
+                        {
+                            await sw.WriteAsync(",");
+                        }
                     }
 
-                    sw.WriteLine();
+                    await sw.WriteLineAsync();
                 }
 
-                sw.Close();
-
                 MessageBox.Show(
-                "목록 저장 완료");
+                    "목록 저장 완료");
             }
-
             catch (Exception ex)
             {
                 MessageBox.Show(
-                ex.Message);
+                    ex.Message);
             }
         }
 
-        // 종료 버튼 클릭 시 현재 폼 닫기
-        private void Btn_Video_Exit_Click(object sender, EventArgs e)
+
+        // ============================================
+        // 종료 버튼
+        // ============================================
+
+        private void Btn_Video_Exit_Click(
+            object sender,
+            EventArgs e)
         {
-            this.Close();
+            Close();
         }
     }
 }
