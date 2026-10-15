@@ -1,24 +1,44 @@
-# 비디오 대여 관리 프로그램
+<div align="center">
 
-**C# WinForms와 ADO.NET으로 구현한 비디오 대여 관리 프로그램**입니다. 수업에서 제공된 화면·기능 요구사항을 바탕으로 시작해, DB 연동과 CRUD 구현 후 비동기 처리와 스레드 처리를 추가했습니다.
+# Video Rental System
 
-## 진행 과정
+**C# · ADO.NET으로 구현하고 비동기 처리를 추가한 대여 관리 프로그램**
 
-처음에는 동기 방식으로 화면과 DB 기능을 구현했습니다. 이후 C# 기반 프로그램 개발을 더 공부하기 위해 비동기 처리와 스레드 처리를 추가했습니다.
+</div>
+
+<p align="center"><img alt="C#" src="https://img.shields.io/badge/C%23-512BD4?style=flat-square"/> <img alt="WinForms" src="https://img.shields.io/badge/WinForms-512BD4?style=flat-square"/> <img alt="ADO.NET" src="https://img.shields.io/badge/ADO.NET-5C2D91?style=flat-square"/> <img alt="SQL Server" src="https://img.shields.io/badge/SQL%20Server-CC2927?style=flat-square"/> <img alt="ClosedXML" src="https://img.shields.io/badge/ClosedXML-217346?style=flat-square"/></p>
+
+
+| 시작 | 구현 범위 | 추가 발전 |
+| :--- | :--- | :--- |
+| 수업의 화면·기능 요구사항 | **고객 · 비디오 · 대여 관리** | **비동기 · 스레드 처리 추가** |
+
+## 🖥️ 주요 기능
+
+<table>
+<tr>
+<td width="33%" align="center"><img src="./video.png" width="72" alt="비디오 관리 기능 아이콘"/><br><b>비디오 관리</b><br>등록 · 수정 · 삭제 · 검색</td>
+<td width="33%" align="center"><img src="./Customer.png" width="72" alt="고객 관리 기능 아이콘"/><br><b>고객 관리</b><br>고객 정보 관리 · 검색</td>
+<td width="33%" align="center"><img src="./video-manage.png" width="72" alt="대여 관리 기능 아이콘"/><br><b>대여·반납</b><br>대여 상태 · 요금 처리</td>
+</tr>
+<tr>
+<td colspan="2"><b>조회 및 출력</b> · 대여 현황과 순위 조회 · Excel 출력</td>
+<td><b>설정</b> · 대여 기간 · 대여료 · 연체료</td>
+</tr>
+</table>
+
+## 🔧 구현 과정
 
 | 단계 | 진행 내용 |
-| --- | --- |
-| 수업 과제 | 제공된 화면·기능 요구사항에 맞춰 WinForms 프로그램 작성 |
-| DB 연동 | ADO.NET과 SQL Server를 이용한 조회·등록·수정·삭제 |
-| 추가 수정 | 기존 동기 처리 코드를 비동기 처리와 스레드 처리를 사용하는 방향으로 수정 |
+| :--- | :--- |
+| **1. 요구사항 구현** | 제공된 화면과 기능에 맞춰 WinForms 구성 |
+| **2. DB 연동** | ADO.NET·저장 프로시저로 SQL Server CRUD 처리 |
+| **3. 기존 코드 보완** | 동기 방식으로 구현한 프로그램에 비동기·스레드 처리 추가 |
 
-## 주요 기능
+WinForms 이벤트에서 DB를 조회하고 결과를 표에 표시하는 흐름을 구현했습니다. 이후 DB 작업과 화면 갱신 처리를 공부하며 기존 코드를 보완했습니다.
 
-- 비디오·고객 정보 조회, 등록, 수정, 삭제
-- 비디오 대여와 반납
-- 대여 기간·대여료·연체료 설정
-- 대여 현황과 순위 조회
-- ClosedXML을 이용한 Excel 출력
+<details>
+<summary><b>🧰 사용 기술</b></summary>
 
 ## 사용 기술
 
@@ -29,31 +49,10 @@
 | DB 연결 | ADO.NET, Microsoft.Data.SqlClient, 저장 프로시저 |
 | 파일 출력 | ClosedXML |
 
-## 화면
+</details>
 
-### 비디오 관리
-
-![비디오 관리](./video.png)
-
-### 고객 관리
-
-![고객 관리](./Customer.png)
-
-### 대여·반납
-
-![대여 관리](./video-manage.png)
-
-### 환경설정
-
-![대여 정책 설정](./gear.png)
-
-### 정보 조회
-
-![정보 조회](./find_information.png)
-
-## 구현 과정에서 다룬 내용
-
-WinForms 이벤트에서 DB를 조회하고 결과를 표에 표시하는 흐름을 연습했습니다. 대여·반납 데이터를 여러 테이블과 연결하고, 최근에는 DB 작업과 화면 갱신을 어떻게 처리할지 공부하며 기존 코드를 수정했습니다.
+<details>
+<summary><b>⚙️ 설치 및 실행</b></summary>
 
 ## 실행 방법
 
@@ -160,3 +159,6 @@ dotnet run --project Video_Program
 또는 Visual Studio에서 `F5`를 눌러 실행합니다.
 
 SQL 스크립트와 연결 문자열을 실행 환경에 맞게 준비해야 합니다.
+
+</details>
+
