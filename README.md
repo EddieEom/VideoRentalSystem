@@ -13,6 +13,12 @@
 | :--- | :--- | :--- |
 | 수업의 화면·기능 요구사항 | **고객 · 비디오 · 대여 관리** | **비동기 · 스레드 처리 추가** |
 
+## 실행 화면
+
+<img src="https://raw.githubusercontent.com/EddieEom/EddieEom/main/assets/screenshots/video-rental.jpg" alt="비디오·고객·대여 관리와 정보 조회를 함께 연 WinForms 화면" width="100%"/>
+
+**고객·비디오·대여 정보 관리** · 여러 관리 화면과 조회 결과를 MDI 창에서 확인할 수 있습니다.
+
 ## 🖥️ 주요 기능
 
 <table>
