@@ -1,17 +1,16 @@
-<div align="center">
+# C# 비디오 대여 관리 프로그램
 
-# Video Rental System
+수업에서 시작한 WinForms 프로그램을 보완하며 **비동기 처리, 저장 프로시저, DB 정규화**를 공부했습니다. 고객·비디오·대여 정보를 입력하고, DB에 저장한 뒤 다시 화면으로 조회하는 프로그램입니다.
 
-**C# · ADO.NET으로 구현하고 비동기 처리를 추가한 대여 관리 프로그램**
+## 이 프로젝트에서 공부한 것
 
-</div>
+- **비동기 처리:** 기존 DB 처리에 async/await를 적용하며 DB 작업을 기다리는 흐름과 완료 후 화면을 갱신하는 순서를 공부했습니다.
+- **저장 프로시저:** 기능별 SQL을 작성하고 C#에서 매개변수를 전달해 호출했습니다.
+- **DB 정규화:** 고객·비디오·대여 정보를 나눠 저장하고 관계를 구성하는 과정을 공부했습니다. 정규화·테이블·인덱스 관련 자료도 남겼습니다.
 
-<p align="center"><img alt="C#" src="https://img.shields.io/badge/C%23-512BD4?style=flat-square"/> <img alt="WinForms" src="https://img.shields.io/badge/WinForms-512BD4?style=flat-square"/> <img alt="ADO.NET" src="https://img.shields.io/badge/ADO.NET-5C2D91?style=flat-square"/> <img alt="SQL Server" src="https://img.shields.io/badge/SQL%20Server-CC2927?style=flat-square"/> <img alt="ClosedXML" src="https://img.shields.io/badge/ClosedXML-217346?style=flat-square"/></p>
+[WinForms 소스](Video_Program) · [SQL 스크립트](database) · [DB 학습 자료](docs/database)
 
-
-| 시작 | 구현 범위 | 추가 발전 |
-| :--- | :--- | :--- |
-| 수업의 화면·기능 요구사항 | **고객 · 비디오 · 대여 관리** | **비동기 · 스레드 처리 추가** |
+실제 서비스의 성능 개선을 증명하는 프로젝트보다는, 화면과 DB를 연결하고 기존 코드를 고쳐 본 학습 기록입니다.
 
 ## 실행 화면
 
@@ -23,9 +22,9 @@
 
 <table>
 <tr>
-<td width="33%" align="center"><img src="./video.png" width="72" alt="비디오 관리 기능 아이콘"/><br><b>비디오 관리</b><br>등록 · 수정 · 삭제 · 검색</td>
-<td width="33%" align="center"><img src="./Customer.png" width="72" alt="고객 관리 기능 아이콘"/><br><b>고객 관리</b><br>고객 정보 관리 · 검색</td>
-<td width="33%" align="center"><img src="./video-manage.png" width="72" alt="대여 관리 기능 아이콘"/><br><b>대여·반납</b><br>대여 상태 · 요금 처리</td>
+<td width="33%" align="center"><img src="./assets/images/video.png" width="72" alt="비디오 관리 기능 아이콘"/><br><b>비디오 관리</b><br>등록 · 수정 · 삭제 · 검색</td>
+<td width="33%" align="center"><img src="./assets/images/Customer.png" width="72" alt="고객 관리 기능 아이콘"/><br><b>고객 관리</b><br>고객 정보 관리 · 검색</td>
+<td width="33%" align="center"><img src="./assets/images/video-manage.png" width="72" alt="대여 관리 기능 아이콘"/><br><b>대여·반납</b><br>대여 상태 · 요금 처리</td>
 </tr>
 <tr>
 <td colspan="2"><b>조회 및 출력</b> · 대여 현황과 순위 조회 · Excel 출력</td>
@@ -86,7 +85,7 @@ cd VideoRentalSystem
 SQL Server에서
 
 ```text
-비디오 프로그램 테이블 생성 쿼리문.sql
+database/비디오 프로그램 테이블 생성 쿼리문.sql
 ```
 
 을 실행하여
@@ -103,15 +102,15 @@ VideoRentalDB
 Repository에 포함된 Stored Procedure Script를 실행합니다.
 
 ```text
-비디오 프로그램 비디오 정보 관리 저장프로시저 쿼리문.sql
+database/비디오 프로그램 비디오 정보 관리 저장프로시저 쿼리문.sql
 
-비디오 프로그램 고객 관리 저장프로시저 쿼리문.sql
+database/비디오 프로그램 고객 관리 저장프로시저 쿼리문.sql
 
-비디오 프로그램 비디오 대여관리 저장프로시저 쿼리문.sql
+database/비디오 프로그램 비디오 대여관리 저장프로시저 쿼리문.sql
 
-비디오 프로그램 정보조회 저장프로시저 쿼리문.sql
+database/비디오 프로그램 정보조회 저장프로시저 쿼리문.sql
 
-비디오 프로그램 환경설정 저장프로시저 쿼리문.sql
+database/비디오 프로그램 환경설정 저장프로시저 쿼리문.sql
 ```
 
 
